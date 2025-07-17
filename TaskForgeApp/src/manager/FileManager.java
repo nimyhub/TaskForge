@@ -14,7 +14,13 @@ public class FileManager {
         }
     }
 	
+	private static boolean fileExists(String filename) {
+		File file = new File(filename);
+		return file.exists();
+	}
+	
 	public static List<Task> loadTasks(String filename) {
+		if(!fileExists(filename)) return new ArrayList<>();
 		try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))){
 			return (List<Task>) in.readObject();
 		} catch (IOException | ClassNotFoundException e) {

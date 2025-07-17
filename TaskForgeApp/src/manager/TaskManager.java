@@ -4,15 +4,16 @@ import java.util.List;
 import data.Task;
 
 public class TaskManager {
-	private String filename = "data/test.dat";
+	private String filename;
 	private List<Task> tasks;
 	
-	public TaskManager() {
+	public TaskManager(String filename) {
+		this.filename = filename;
 		tasks = FileManager.loadTasks(filename);
 	}
 	
 	public void loadTasks() {
-		FileManager.loadTasks(filename);
+		tasks = FileManager.loadTasks(filename);
 	}
 	
 	public void saveTasks() {
