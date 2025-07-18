@@ -2,7 +2,8 @@ package app;
 
 public class RunApp {
 	public static void main(String[] args) {
-		ConsoleUI console = ConsoleUI.getInstance();
-		console.run();
+		//ConsoleUI console = ConsoleUI.getInstance();
+		//console.run();
+		TaskForgeApplication.launch(TaskForgeApplication.class, args);
 	}
 }

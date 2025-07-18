@@ -37,4 +37,8 @@ public class TaskManager {
 			System.out.println(t);
 		}
 	}
+	
+	public List<Task> getTaskList(){
+		return tasks;
+	}
 }
