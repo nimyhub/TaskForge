@@ -1,1 +1,13 @@
-/bin/
+# Ignore Eclipse config
+TaskForgeApp/.classpath
+
+# Ignore saved task data
+TaskForgeApp/data/test.dat
+
+# Optional: ignore all .dat files
+*.dat
+
+# Optional: ignore IDE config folders
+.settings/
+.idea/
+

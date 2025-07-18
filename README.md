@@ -8,21 +8,25 @@ TaskForge is a Java-based task management application designed to help users eff
 
 - Add new tasks
 - Delete tasks
+- GUI using JavaFX
 - Store tasks between sessions using `.dat` files (Java object serialization)
-- Console-based user interface
+
+---
+
+## Currently Working On
+
+- Edit existing tasks
+- Export/import task data in readable formats (`.txt` or `.json`)
 
 ---
 
 ## Planned Features
 
-- Edit existing tasks
 - Task categories (e.g. School, Work, Personal)
 - Deadlines and due dates
 - Task completion tracking
 - Sorting and filtering
-- GUI using JavaFX or Swing
-- Export/import task data in readable formats (e.g. `.txt`, `.json`)
-- Cross-device or cloud syncing (optional future scope)
+- Cross-device or cloud syncing
 
 ---
 
@@ -35,15 +39,32 @@ TaskForge is a Java-based task management application designed to help users eff
 
 ---
 
+## Requirements
+
+- JDK 20 or newer (JavaFX 24 tested)
+- JavaFX SDK (https://gluonhq.com/products/javafx/)
+
+---
+
 ## Installation
 
 1. Clone the repository:
+    ```bash
     git clone https://github.com/nimyhub/TaskForge.git
     cd TaskForge
+    ```
 
-2. Open the project in your Java IDE (Eclipse, IntelliJ, etc.)
+2. Download and install the JavaFX SDK and set it up in your IDE or build tool.
 
-3. Compile and run the `RunApp` class
+3. Open the project in your Java IDE (Eclipse, IntelliJ, etc.)
+
+4. Make sure to add JavaFX libraries to your module path or VM options. For example, add to VM arguments:
+
+    ```
+    --module-path /path/to/javafx-sdk-24.0.2/lib --add-modules javafx.controls,javafx.fxml
+    ```
+
+5. Compile and run the `RunApp` class.
 
 ---
 
