@@ -2,6 +2,7 @@ package data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Task implements Serializable{
 	private static final long serialVersionUID = 1L;
@@ -47,4 +48,21 @@ public class Task implements Serializable{
     public String toString() {
     	return String.format("[%s] %s (Due: %s) - %s", isCompleted ? "✓":" ", title, dueDate, priority);
     }
+    
+    @Override
+	public boolean equals(Object obj) {
+	    if (this == obj) return true;
+	    if (obj == null || getClass() != obj.getClass()) return false;
+	    Task other = (Task) obj;
+	    return Objects.equals(title, other.title)
+	        && Objects.equals(description, other.description)
+	        && Objects.equals(dueDate, other.dueDate)
+	        && Objects.equals(isCompleted, other.isCompleted)
+	        && Objects.equals(priority, other.priority);
+	}
+
+	@Override
+	public int hashCode() {
+	    return Objects.hash(title, description, dueDate, isCompleted, priority);
+	}
 }

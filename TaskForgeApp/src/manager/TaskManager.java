@@ -1,23 +1,35 @@
 package manager;
 
+import java.util.ArrayList;
 import java.util.List;
 import data.Task;
 
 public class TaskManager {
-	private String filename;
 	private List<Task> tasks;
+	private FileManager fileManager;
 	
 	public TaskManager(String filename) {
-		this.filename = filename;
-		tasks = FileManager.loadTasks(filename);
+		this.fileManager = new FileManager(filename);
+		tasks = fileManager.loadTasks();
+	}
+	
+	public void setSaveFile(String filename) {
+		this.fileManager = new FileManager(filename);
+		loadTasks();
 	}
 	
 	public void loadTasks() {
-		tasks = FileManager.loadTasks(filename);
+		tasks = fileManager.loadTasks();
+		if (tasks == null) tasks = new ArrayList<>();
 	}
 	
 	public void saveTasks() {
-		FileManager.saveTasks(tasks, filename);
+		fileManager.saveTasks(tasks);
+	}
+	
+	public boolean isTasksUpdated() {
+	    List<Task> loadedTasks = fileManager.loadTasks();
+	    return tasks.equals(loadedTasks);
 	}
 	
 	public void addTask(Task task) {
