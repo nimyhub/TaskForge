@@ -1,35 +1,39 @@
 package manager;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import data.Task;
+import data.TaskSerializer;
 
 public class TaskManager {
-	private List<Task> tasks;
-	private FileManager fileManager;
+	private List<Task> tasks = new ArrayList<>();
+	private TaskSerializer serializer;
+	private File currentFile;
 	
-	public TaskManager(String filename) {
-		this.fileManager = new FileManager(filename);
-		tasks = fileManager.loadTasks();
-	}
+	public TaskManager(TaskSerializer serializer, File file) {
+        this.serializer = serializer;
+        currentFile = file;
+    }
 	
-	public void setSaveFile(String filename) {
-		this.fileManager = new FileManager(filename);
-		loadTasks();
-	}
+	public void loadTasks() throws IOException, ClassNotFoundException {
+        this.tasks = serializer.load(currentFile);
+    }
 	
-	public void loadTasks() {
-		tasks = fileManager.loadTasks();
-		if (tasks == null) tasks = new ArrayList<>();
-	}
-	
-	public void saveTasks() {
-		fileManager.saveTasks(tasks);
-	}
+	public void saveTasks() throws IOException {
+        serializer.save(tasks, currentFile);
+    }
 	
 	public boolean isTasksUpdated() {
-	    List<Task> loadedTasks = fileManager.loadTasks();
-	    return tasks.equals(loadedTasks);
+		try {
+			List<Task> loadedTasks;
+			loadedTasks = serializer.load(currentFile);
+			return tasks.equals(loadedTasks);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	public void addTask(Task task) {
@@ -42,12 +46,6 @@ public class TaskManager {
 	
 	public void removeTask(int index) {
 		if(tasks.size() > index) tasks.remove(index);
-	}
-	
-	public void printTasks() {
-		for (Task t : tasks) {
-			System.out.println(t);
-		}
 	}
 	
 	public List<Task> getTaskList(){

@@ -5,10 +5,18 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import data.Task;
+import data.TaskSerializer;
+import data.Config;
 import data.Priority;
+import data.TaskSerializerFactory;
+import manager.ConfigManager;
 import manager.TaskManager;
+
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Optional;
 import javafx.scene.control.ButtonBar;
@@ -17,6 +25,7 @@ public class TaskForgeController {
 	@FXML
 	private ListView<String> taskListView;
 	private TaskManager taskManager;
+	private ConfigManager configManager;
 	private Stage stage;
 	private int taskNumber = 0;
 	
@@ -24,8 +33,18 @@ public class TaskForgeController {
 		this.stage = stage;
 	}
 	
-	public void setTaskManager(TaskManager taskManager) {
-		this.taskManager = taskManager;
+	public void setConfigManager() {
+		configManager = new ConfigManager();
+	}
+	
+	public void setTaskManager() {
+		Config config = configManager.loadConfig();
+		TaskSerializer serializer = TaskSerializerFactory.get(config.getLastFormat());
+		File file = new File(config.getLastDir(), config.getLastFileName() + config.getLastFormat());
+		taskManager = new TaskManager(serializer, file);
+		try {
+			taskManager.loadTasks();
+		} catch (IOException | ClassNotFoundException e) {e.printStackTrace();}
 		updateTaskList();
 	}
 	
@@ -49,7 +68,16 @@ public class TaskForgeController {
 
     @FXML
     private void handleSave() {
-        taskManager.saveTasks();
+        try {
+			taskManager.saveTasks();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    @FXML
+    private void handleSettings() {
+
     }
     
     @FXML
@@ -66,7 +94,7 @@ public class TaskForgeController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent()) {
                 if (result.get() == saveButton) {
-                    taskManager.saveTasks();
+                	handleSave();
                     Platform.exit();
                 } else if (result.get() == dontSaveButton) {
                     Platform.exit();
@@ -75,6 +103,45 @@ public class TaskForgeController {
         } else {
             Platform.exit();
         }
+    }
+    
+    @FXML
+    private void handleOpenFile() {
+    	FileChooser fileChooser = createFileChooser();
+    	Config oldConfig = configManager.loadConfig();
+    	File initialDir = new File(oldConfig.getLastDir());
+    	if(initialDir.exists()) fileChooser.setInitialDirectory(initialDir);
+    	File selectedFile = fileChooser.showOpenDialog(stage);
+    	if(selectedFile == null) return;
+    	Config config = createNewConfig(selectedFile);
+    	configManager.saveConfig(config);
+    	setTaskManager();
+    }
+    
+    private Config createNewConfig(File selectedFile) {
+    	Config config = new Config();
+    	String dir = selectedFile.getParent();
+    	String fileName = selectedFile.getName();
+    	String format = "";                          
+    	int i = fileName.lastIndexOf('.');
+    	if (i > 0) {
+    		format = fileName.substring(i);
+    		fileName = fileName.substring(0, i);
+    	}
+    	config.setLastDir(dir);
+    	config.setLastFileName(fileName);
+    	config.setLastFormat(format);
+    	return config;
+    }
+    
+    private FileChooser createFileChooser() {
+    	FileChooser chooser = new FileChooser();
+        chooser.setTitle("Open Task File");
+        chooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("Task Files (*.dat, *.json, *.txt)", "*.dat", "*.json", "*.txt"),
+            new FileChooser.ExtensionFilter("All Files", "*.*")
+        );
+        return chooser;
     }
 
 	private void updateTaskList() {
