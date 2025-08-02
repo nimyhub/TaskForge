@@ -20,6 +20,7 @@ public class DatTaskSerializer implements TaskSerializer {
         }
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Task> load(File file) throws IOException, ClassNotFoundException {
 		System.out.println("DatTaskSerializer::load. trying to load file: "+file);

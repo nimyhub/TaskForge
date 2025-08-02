@@ -13,10 +13,12 @@ public class TaskForgeApplication extends Application{
 		Parent root = loader.load();
 		TaskForgeController controller = loader.getController();
 		controller.setConfigManager();
+		controller.setStage(primaryStage);
 		controller.setTaskManager();
 		primaryStage.setTitle("TaskForge");
 		primaryStage.setScene(new Scene(root, 600, 400));
 		primaryStage.show();
+		controller.setTaskManager();
 		primaryStage.setOnCloseRequest(event -> {
 		    event.consume();
 		    controller.handleExit();

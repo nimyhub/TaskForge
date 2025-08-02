@@ -24,6 +24,10 @@ public class TaskManager {
 	public void saveTasks() throws IOException {
         serializer.save(tasks, currentFile);
     }
+
+	public void saveTasks(File newFile) throws IOException {
+        serializer.save(tasks, newFile);
+    }
 	
 	public boolean isTasksUpdated() {
 		try {

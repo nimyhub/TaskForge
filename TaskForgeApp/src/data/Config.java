@@ -31,4 +31,8 @@ public class Config implements Serializable {
 	public String getLastFormat() {
 		return lastFormat;
 	}
+	
+	public String getFile() {
+		return new String(lastDir + lastFileName + lastFormat);
+	}
 }

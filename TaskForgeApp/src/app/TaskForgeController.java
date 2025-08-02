@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import data.Task;
 import data.TaskSerializer;
 import data.Config;
+import data.DatTaskSerializer;
 import data.Priority;
 import data.TaskSerializerFactory;
 import manager.ConfigManager;
@@ -26,6 +27,7 @@ public class TaskForgeController {
 	private ListView<String> taskListView;
 	private TaskManager taskManager;
 	private ConfigManager configManager;
+	private boolean triedDefault = false;
 	private Stage stage;
 	private int taskNumber = 0;
 	
@@ -38,13 +40,24 @@ public class TaskForgeController {
 	}
 	
 	public void setTaskManager() {
-		Config config = configManager.loadConfig();
-		TaskSerializer serializer = TaskSerializerFactory.get(config.getLastFormat());
-		File file = new File(config.getLastDir(), config.getLastFileName() + config.getLastFormat());
-		taskManager = new TaskManager(serializer, file);
 		try {
+			Config config = configManager.loadConfig();
+			TaskSerializer serializer = TaskSerializerFactory.get(config.getLastFormat());
+			if (serializer == null) throw new IllegalArgumentException("Unsupported format");
+			File file = new File(config.getLastDir(), config.getLastFileName() + config.getLastFormat());
+			updateWindowTitle(file);
+			taskManager = new TaskManager(serializer, file);
 			taskManager.loadTasks();
-		} catch (IOException | ClassNotFoundException e) {e.printStackTrace();}
+		} catch (IOException | ClassNotFoundException | IllegalArgumentException e) {
+			if (!triedDefault) {
+				triedDefault = true;
+				configManager.defaultOnError();
+				setTaskManager();
+				triedDefault = false;
+			} else {
+				e.printStackTrace();
+			}
+		}
 		updateTaskList();
 	}
 	
@@ -63,15 +76,6 @@ public class TaskForgeController {
 		}
 		else {
 			System.out.println("No task selected.");
-		}
-    }
-
-    @FXML
-    private void handleSave() {
-        try {
-			taskManager.saveTasks();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
     }
     
@@ -106,8 +110,33 @@ public class TaskForgeController {
     }
     
     @FXML
+    private void handleSave() {
+        try {
+			taskManager.saveTasks();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    @FXML
+    private void handleSaveAs() throws Exception{
+    	FileChooser fileChooser = createFileChooserSave();
+    	Config oldConfig = configManager.loadConfig();
+    	File initialDir = new File(oldConfig.getLastDir());
+    	if(initialDir.exists()) fileChooser.setInitialDirectory(initialDir);
+    	fileChooser.setInitialFileName(oldConfig.getLastFileName()+oldConfig.getLastFormat());
+    	File file = fileChooser.showSaveDialog(stage);
+    	if(file != null) {
+    		Config config = createNewConfig(file);
+        	configManager.saveConfig(config);
+        	taskManager.saveTasks(file);
+        	setTaskManager();
+    	}
+    }
+    
+    @FXML
     private void handleOpenFile() {
-    	FileChooser fileChooser = createFileChooser();
+    	FileChooser fileChooser = createFileChooserOpen();
     	Config oldConfig = configManager.loadConfig();
     	File initialDir = new File(oldConfig.getLastDir());
     	if(initialDir.exists()) fileChooser.setInitialDirectory(initialDir);
@@ -116,6 +145,14 @@ public class TaskForgeController {
     	Config config = createNewConfig(selectedFile);
     	configManager.saveConfig(config);
     	setTaskManager();
+    }
+    
+    public void updateWindowTitle(File file) {
+        if (file != null) {
+            stage.setTitle("TaskForge - " + file.getName());
+        } else {
+            stage.setTitle("TaskForge");
+        }
     }
     
     private Config createNewConfig(File selectedFile) {
@@ -134,12 +171,21 @@ public class TaskForgeController {
     	return config;
     }
     
-    private FileChooser createFileChooser() {
+    private FileChooser createFileChooserOpen() {
     	FileChooser chooser = new FileChooser();
         chooser.setTitle("Open Task File");
         chooser.getExtensionFilters().addAll(
             new FileChooser.ExtensionFilter("Task Files (*.dat, *.json, *.txt)", "*.dat", "*.json", "*.txt"),
             new FileChooser.ExtensionFilter("All Files", "*.*")
+        );
+        return chooser;
+    }
+    
+    private FileChooser createFileChooserSave() {
+    	FileChooser chooser = new FileChooser();
+        chooser.setTitle("Save Task File as");
+        chooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("Task Files (*.dat, *.json, *.txt)", "*.dat", "*.json", "*.txt")
         );
         return chooser;
     }

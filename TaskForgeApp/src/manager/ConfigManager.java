@@ -38,7 +38,12 @@ public class ConfigManager {
 			e.printStackTrace();
 		}
 	}
-
+	
+	public void defaultOnError() {
+		Config config = getDefaultConfig();
+		saveConfig(config);
+	}
+	
 	private Config getDefaultConfig() {
 		Config config = new Config();
 		String userHome = System.getProperty("user.home");
