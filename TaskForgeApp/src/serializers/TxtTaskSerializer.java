@@ -1,4 +1,4 @@
-package data;
+package serializers;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import data.Priority;
+import data.Task;
 
 public class TxtTaskSerializer implements TaskSerializer {
 

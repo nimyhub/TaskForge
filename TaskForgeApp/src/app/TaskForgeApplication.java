@@ -1,5 +1,6 @@
 package app;
 
+import controllers.MainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,9 +10,9 @@ import javafx.stage.Stage;
 public class TaskForgeApplication extends Application{
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("/data/TaskForgeView.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainView.fxml"));
 		Parent root = loader.load();
-		TaskForgeController controller = loader.getController();
+		MainController controller = loader.getController();
 		controller.setConfigManager();
 		controller.setStage(primaryStage);
 		controller.setTaskManager();

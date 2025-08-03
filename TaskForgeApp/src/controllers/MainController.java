@@ -1,4 +1,4 @@
-package app;
+package controllers;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -13,21 +13,24 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import data.Task;
-import data.TaskSerializer;
 import data.Config;
-import data.TaskSerializerFactory;
 import manager.ConfigManager;
 import manager.TaskManager;
+import serializers.TaskSerializer;
+import serializers.TaskSerializerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import javafx.scene.control.ButtonBar;
 
-public class TaskForgeController {
+public class MainController {
 	@FXML private ListView<String> taskListView;
 	@FXML private Button editTask;
 	@FXML private Button removeTask;
+	private List<Task> tempTasks = new ArrayList<>();
 	private TaskManager taskManager;
 	private ConfigManager configManager;
 	private boolean triedDefault = false;
@@ -76,7 +79,7 @@ public class TaskForgeController {
 	private void handleEditTask() {
 		try {
 			Task selectedTask = taskManager.getTaskList().get(taskListView.getSelectionModel().getSelectedIndex());
-	        FXMLLoader loader = new FXMLLoader(getClass().getResource("/data/TaskEditor.fxml"));
+	        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/TaskEditor.fxml"));
 	        Parent root = loader.load();
 	        TaskEditorController controller = loader.getController();
 	        Stage stage = new Stage();
@@ -103,7 +106,7 @@ public class TaskForgeController {
 	@FXML
 	private void handleAddTask() {
 		try {
-	        FXMLLoader loader = new FXMLLoader(getClass().getResource("/data/TaskEditor.fxml"));
+	        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/TaskEditor.fxml"));
 	        Parent root = loader.load();
 	        TaskEditorController controller = loader.getController();
 	        Stage stage = new Stage();
@@ -181,8 +184,11 @@ public class TaskForgeController {
     	if(file != null) {
     		Config config = createNewConfig(file);
         	configManager.saveConfig(config);
-        	taskManager.saveTasks(file);
+        	tempTasks = taskManager.getTaskList();
         	setTaskManager();
+        	taskManager.setTaskList(tempTasks);
+        	taskManager.saveTasks(file);
+        	updateTaskList();
     	}
     }
     
@@ -244,6 +250,7 @@ public class TaskForgeController {
 
     private void updateTaskList() {
     	taskListView.getItems().clear();
+    	if(taskManager.getTaskList() == null) return;
     	for (Task task : taskManager.getTaskList()) {
     		if (task != null) {
     			taskListView.getItems().add(task.toString());

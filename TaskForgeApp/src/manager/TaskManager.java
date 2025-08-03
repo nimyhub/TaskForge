@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import data.Task;
-import data.TaskSerializer;
+import serializers.TaskSerializer;
 
 public class TaskManager {
 	private List<Task> tasks = new ArrayList<>();
@@ -28,6 +28,11 @@ public class TaskManager {
 	public void saveTasks(File newFile) throws IOException {
         serializer.save(tasks, newFile);
     }
+	
+	public void setTaskList(List<Task> list) {
+		if(list == null) return;
+		tasks = list;
+	}
 	
 	public boolean isTasksUpdated() {
 		try {

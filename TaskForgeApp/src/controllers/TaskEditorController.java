@@ -1,4 +1,4 @@
-package app;
+package controllers;
 
 import java.time.LocalDate;
 
@@ -37,7 +37,7 @@ public class TaskEditorController {
         
 
         if (!title.isEmpty()) {
-            result = new Task(title, desc, date, priority); // Or your constructor
+            result = new Task(title, desc, date, priority);
             stage.close();
         } else {
         	editTaskName.setStyle("-fx-border-color: red;");
