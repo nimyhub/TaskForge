@@ -41,11 +41,15 @@ public class TaskManager {
 	}
 	
 	public void addTask(Task task) {
-		tasks.add(task);
+		if (task != null) {
+	        tasks.add(task);
+	    } else {
+	        System.err.println("Warning: Attempted to add null task.");
+	    }
 	}
 	
 	public void removeTask(Task task) {
-		if(tasks.indexOf(task) != -1)tasks.remove(task);
+		tasks.remove(task);
 	}
 	
 	public void removeTask(int index) {

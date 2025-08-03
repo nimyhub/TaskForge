@@ -2,34 +2,36 @@ package app;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import data.Task;
 import data.TaskSerializer;
 import data.Config;
-import data.DatTaskSerializer;
-import data.Priority;
 import data.TaskSerializerFactory;
 import manager.ConfigManager;
 import manager.TaskManager;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Optional;
 import javafx.scene.control.ButtonBar;
 
 public class TaskForgeController {
-	@FXML
-	private ListView<String> taskListView;
+	@FXML private ListView<String> taskListView;
+	@FXML private Button editTask;
+	@FXML private Button removeTask;
 	private TaskManager taskManager;
 	private ConfigManager configManager;
 	private boolean triedDefault = false;
 	private Stage stage;
-	private int taskNumber = 0;
 	
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -37,6 +39,15 @@ public class TaskForgeController {
 	
 	public void setConfigManager() {
 		configManager = new ConfigManager();
+	}
+	
+	public void initialize() {
+		removeTask.disableProperty().bind(
+	        taskListView.getSelectionModel().selectedItemProperty().isNull()
+	    );
+		editTask.disableProperty().bind(
+		        taskListView.getSelectionModel().selectedItemProperty().isNull()
+		    );
 	}
 	
 	public void setTaskManager() {
@@ -62,9 +73,50 @@ public class TaskForgeController {
 	}
 	
 	@FXML
+	private void handleEditTask() {
+		try {
+			Task selectedTask = taskManager.getTaskList().get(taskListView.getSelectionModel().getSelectedIndex());
+	        FXMLLoader loader = new FXMLLoader(getClass().getResource("/data/TaskEditor.fxml"));
+	        Parent root = loader.load();
+	        TaskEditorController controller = loader.getController();
+	        Stage stage = new Stage();
+	        stage.setTitle("Edit Task");
+	        stage.initModality(Modality.APPLICATION_MODAL);
+	        stage.setScene(new Scene(root));
+	        controller.setStage(stage);
+	        controller.setInitialTask(selectedTask);
+	        stage.showAndWait();
+	        
+	        Task result = controller.getResult();
+	        if(result != null) {
+	        	taskManager.addTask(result);
+	        	taskManager.removeTask(selectedTask);
+	        	updateTaskList();
+	        }else {
+	        	System.out.println("Edit cancelled – no changes made.");
+	        }
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
+	@FXML
 	private void handleAddTask() {
-        taskManager.addTask(new Task("Test"+ ++taskNumber, "From FXML", LocalDate.now().plusDays(1), Priority.HIGH));
-        updateTaskList();
+		try {
+	        FXMLLoader loader = new FXMLLoader(getClass().getResource("/data/TaskEditor.fxml"));
+	        Parent root = loader.load();
+	        TaskEditorController controller = loader.getController();
+	        Stage stage = new Stage();
+	        stage.setTitle("Add Task");
+	        stage.initModality(Modality.APPLICATION_MODAL);
+	        stage.setScene(new Scene(root));
+	        controller.setStage(stage);
+	        stage.showAndWait();
+	        taskManager.addTask(controller.getResult());
+	        updateTaskList();
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
     }
 
 	@FXML
@@ -190,11 +242,15 @@ public class TaskForgeController {
         return chooser;
     }
 
-	private void updateTaskList() {
-		taskListView.getItems().clear();
-		for (Task task : taskManager.getTaskList()) {
-			taskListView.getItems().add(task.toString());
-		}
-	}
+    private void updateTaskList() {
+    	taskListView.getItems().clear();
+    	for (Task task : taskManager.getTaskList()) {
+    		if (task != null) {
+    			taskListView.getItems().add(task.toString());
+    		} else {
+    			System.err.println("Warning: Skipped null task in task list");
+    		}
+    	}
+    }
 	
 }
