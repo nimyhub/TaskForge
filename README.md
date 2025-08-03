@@ -7,17 +7,17 @@ TaskForge is a Java-based task management application designed to help users eff
 ## Implemented Features
 
 - Add new tasks
+- Edit existing tasks
 - Delete Selected tasks
 - GUI using JavaFX and fxml
-- Store tasks between sessions using `.dat` files (Java object serialization)
+- Export/import tasks using `.dat` and `.txt` files
 - Exit confirmation prompt for unsaved work
 
 ---
 
 ## Currently Working On
 
-- Edit existing tasks
-- Export/import task data in readable formats (`.txt` or `.json`)
+- Export/import task data in readable formats (`.json`)
 
 ---
 
@@ -37,6 +37,7 @@ TaskForge is a Java-based task management application designed to help users eff
 - Eclipse IDE (or IntelliJ)
 - Git and GitHub for version control
 - `.dat` file storage using Java built-in serialization (`ObjectOutputStream`, `ObjectInputStream`)
+- `.txt` custom file storage.
 - UI structure created with FXML for declarative layout.
 
 ---
