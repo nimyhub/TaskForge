@@ -10,14 +10,15 @@ TaskForge is a Java-based task management application designed to help users eff
 - Edit existing tasks
 - Delete Selected tasks
 - GUI using JavaFX and fxml
-- Export/import tasks using `.dat` and `.txt` files
+- Export/import tasks using `.dat`,`.json` and `.txt` files
 - Exit confirmation prompt for unsaved work
 
 ---
 
 ## Currently Working On
 
-- Export/import task data in readable formats (`.json`)
+- Sorting and filtering
+- Improving UI
 
 ---
 
@@ -44,30 +45,40 @@ TaskForge is a Java-based task management application designed to help users eff
 
 ## Requirements
 
-- JDK 20 or newer (JavaFX 24 tested)
-- JavaFX SDK (https://gluonhq.com/products/javafx/)
+- **JDK 20** or newer (tested with **JavaFX 24**)
+- **JavaFX SDK** – [Download from Gluon](https://gluonhq.com/products/javafx/)
+- **Gson** – [Google's JSON library](https://github.com/google/gson) (used for saving/loading `.json` task files)
 
 ---
 
 ## Installation
 
-1. Clone the repository:
+1. **Clone the repository:**
     ```bash
     git clone https://github.com/nimyhub/TaskForge.git
     cd TaskForge
     ```
 
-2. Download and install the JavaFX SDK and set it up in your IDE or build tool.
+2. **Install JavaFX:**
 
-3. Open the project in your Java IDE (Eclipse, IntelliJ, etc.)
+    - Download the JavaFX SDK from [gluonhq.com](https://gluonhq.com/products/javafx/)
+    - Unzip it and remember the path (e.g., `/path/to/javafx-sdk-24.0.2`)
 
-4. Make sure to add JavaFX libraries to your module path or VM options. For example, add to VM arguments:
+3. **Set up dependencies:**
 
-    ```
-    --module-path /path/to/javafx-sdk-24.0.2/lib --add-modules javafx.controls,javafx.fxml
-    ```
+    - In your IDE (Eclipse, IntelliJ, etc.):
+        - Add JavaFX to your **module path**
+        - Add the `gson-<version>.jar` file to your **build path**  
+          (Download from [Maven Central](https://repo1.maven.org/maven2/com/google/code/gson/gson/))
 
-5. Compile and run the `RunApp` class.
+    - When running the app, add this to your VM options:
+        ```
+        --module-path /path/to/javafx-sdk-24.0.2/lib --add-modules javafx.controls,javafx.fxml
+        ```
+
+4. **Open the project** in your IDE and let it build.
+
+5. **Run the application** by launching the `RunApp` class.
 
 ---
 
@@ -76,10 +87,11 @@ TaskForge is a Java-based task management application designed to help users eff
 Niko  
 Information Engineering Student  
 GitHub: [https://github.com/nimyhub](https://github.com/nimyhub)
-
+Gson – Google's JSON library (used for saving/loading .json task files)
 ---
 
 ## License
 
-This project is for educational use. License information coming soon.
+This project is licensed under the [MIT License](LICENSE).
+
 
