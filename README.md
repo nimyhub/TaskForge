@@ -87,7 +87,6 @@ TaskForge is a Java-based task management application designed to help users eff
 Niko  
 Information Engineering Student  
 GitHub: [https://github.com/nimyhub](https://github.com/nimyhub)
-Gson – Google's JSON library (used for saving/loading .json task files)
 ---
 
 ## License
